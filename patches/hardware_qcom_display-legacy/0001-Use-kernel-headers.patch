@@ -1,0 +1,113 @@
+From f1204d371b16e7567869e6c8d1f1cce843b05140 Mon Sep 17 00:00:00 2001
+From: dhacker29 <dhackerdvm@gmail.com>
+Date: Thu, 17 Apr 2014 07:10:58 -0400
+Subject: [PATCH] Use kernel headers
+
+Change-Id: If85dd389ffe854ed7bf2dcb864e2df6d65db8251
+---
+ common.mk                | 5 +++++
+ libgenlock/Android.mk    | 1 +
+ libgralloc/Android.mk    | 6 ++++--
+ libhwcomposer/Android.mk | 2 +-
+ liboverlay/Android.mk    | 3 ++-
+ libqdutils/Android.mk    | 1 +
+ 6 files changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/common.mk b/common.mk
+index 0c4e7e7..0e54b77 100644
+--- a/common.mk
++++ b/common.mk
+@@ -28,3 +28,8 @@ endif
+ ifeq ($(TARGET_NO_HW_VSYNC),true)
+     common_flags += -DNO_HW_VSYNC
+ endif
++
++ifeq ($(call is-vendor-board-platform,QCOM),true)
++common_deps += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
++kernel_includes += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
++endif
+diff --git a/libgenlock/Android.mk b/libgenlock/Android.mk
+index 9797000..92ac227 100644
+--- a/libgenlock/Android.mk
++++ b/libgenlock/Android.mk
+@@ -7,6 +7,7 @@ LOCAL_MODULE_TAGS             := optional
+ LOCAL_C_INCLUDES              := $(common_includes)
+ LOCAL_SHARED_LIBRARIES        := liblog libcutils
+ LOCAL_CFLAGS                  := $(common_flags) -DLOG_TAG=\"libgenlock\"
++LOCAL_ADDITIONAL_DEPENDENCIES := $(common_deps)
+ LOCAL_SRC_FILES               := genlock.cpp
+ include $(BUILD_SHARED_LIBRARY)
+ 
+diff --git a/libgralloc/Android.mk b/libgralloc/Android.mk
+index 2b8f634..a3a0466 100644
+--- a/libgralloc/Android.mk
++++ b/libgralloc/Android.mk
+@@ -20,10 +20,11 @@ include $(CLEAR_VARS)
+ LOCAL_MODULE                  := gralloc.$(TARGET_BOARD_PLATFORM)
+ LOCAL_MODULE_PATH             := $(TARGET_OUT_SHARED_LIBRARIES)/hw
+ LOCAL_MODULE_TAGS             := optional
+-LOCAL_C_INCLUDES              := $(common_includes)
++LOCAL_C_INCLUDES              := $(common_includes) $(kernel_includes)
+ LOCAL_SHARED_LIBRARIES        := $(common_libs) libmemalloc libgenlock
+ LOCAL_SHARED_LIBRARIES        += libqdutils libGLESv1_CM
+ LOCAL_CFLAGS                  := $(common_flags) -DLOG_TAG=\"gralloc\"
++LOCAL_ADDITIONAL_DEPENDENCIES := $(common_deps) $(kernel_deps)
+ LOCAL_SRC_FILES               :=  gpu.cpp gralloc.cpp framebuffer.cpp mapper.cpp
+ include $(BUILD_SHARED_LIBRARY)
+ 
+@@ -31,9 +32,10 @@ include $(BUILD_SHARED_LIBRARY)
+ include $(CLEAR_VARS)
+ LOCAL_MODULE           := libmemalloc
+ LOCAL_MODULE_TAGS      := optional
+-LOCAL_C_INCLUDES       := $(common_includes)
++LOCAL_C_INCLUDES       := $(common_includes) $(kernel_includes)
+ LOCAL_SHARED_LIBRARIES := $(common_libs) libgenlock libqdutils
+ LOCAL_CFLAGS           := $(common_flags) -DLOG_TAG=\"memalloc\"
++LOCAL_ADDITIONAL_DEPENDENCIES := $(common_deps) $(kernel_deps)
+ LOCAL_SRC_FILES        := alloc_controller.cpp
+ ifeq ($(TARGET_USES_ION),true)
+     LOCAL_SRC_FILES += ionalloc.cpp
+diff --git a/libhwcomposer/Android.mk b/libhwcomposer/Android.mk
+index c9a0a51..2372847 100644
+--- a/libhwcomposer/Android.mk
++++ b/libhwcomposer/Android.mk
+@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
+ LOCAL_MODULE                  := hwcomposer.$(TARGET_BOARD_PLATFORM)
+ LOCAL_MODULE_PATH             := $(TARGET_OUT_SHARED_LIBRARIES)/hw
+ LOCAL_MODULE_TAGS             := optional
+-LOCAL_C_INCLUDES              := $(common_includes)
++LOCAL_C_INCLUDES              := $(common_includes) $(kernel_includes)
+ LOCAL_SHARED_LIBRARIES        := $(common_libs) libEGL liboverlay libgenlock \
+                                  libhwcexternal libqdutils libhardware_legacy \
+                                  libdl libmemalloc libhwcservice
+diff --git a/liboverlay/Android.mk b/liboverlay/Android.mk
+index e3596c0..3915b81 100644
+--- a/liboverlay/Android.mk
++++ b/liboverlay/Android.mk
+@@ -4,9 +4,10 @@ include $(CLEAR_VARS)
+ LOCAL_MODULE                  := liboverlay
+ LOCAL_MODULE_PATH             := $(TARGET_OUT_SHARED_LIBRARIES)
+ LOCAL_MODULE_TAGS             := optional
+-LOCAL_C_INCLUDES              := $(common_includes)
++LOCAL_C_INCLUDES              := $(common_includes) $(kernel_includes)
+ LOCAL_SHARED_LIBRARIES        := $(common_libs) libmemalloc libqdutils
+ LOCAL_CFLAGS                  := $(common_flags) -DLOG_TAG=\"overlay\"
++LOCAL_ADDITIONAL_DEPENDENCIES := $(common_deps)
+ LOCAL_SRC_FILES := \
+       overlay.cpp \
+       overlayCtrl.cpp \
+diff --git a/libqdutils/Android.mk b/libqdutils/Android.mk
+index ca6a29a..b0385fb 100644
+--- a/libqdutils/Android.mk
++++ b/libqdutils/Android.mk
+@@ -7,6 +7,7 @@ LOCAL_MODULE_TAGS             := optional
+ LOCAL_SHARED_LIBRARIES        := $(common_libs) libdl libui libcutils
+ LOCAL_C_INCLUDES              += $(TOP)/hardware/qcom/display-legacy/libhwcomposer
+ LOCAL_C_INCLUDES              += $(TOP)/hardware/qcom/display-legacy/libgralloc
++LOCAL_C_INCLUDES              +=  $(kernel_includes)
+ 
+ LOCAL_CFLAGS                  := $(common_flags)
+ LOCAL_ADDITIONAL_DEPENDENCIES := $(common_deps)
+-- 
+1.8.3.2
+
