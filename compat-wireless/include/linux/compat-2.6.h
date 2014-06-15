@@ -9,7 +9,7 @@
 #else
 #include <linux/autoconf.h>
 #endif
-//#include <linux/compat_autoconf.h>
+#include <linux/compat_autoconf.h>
 
 /*
  * Each compat file represents compatibility code for new kernel
