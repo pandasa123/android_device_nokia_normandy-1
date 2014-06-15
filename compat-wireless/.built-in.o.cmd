@@ -1,0 +1,1 @@
+cmd_/home/davidvaz/Nokia/device/nokia/normandy/compat-wireless/built-in.o :=  rm -f /home/davidvaz/Nokia/device/nokia/normandy/compat-wireless/built-in.o; ar rcsD /home/davidvaz/Nokia/device/nokia/normandy/compat-wireless/built-in.o

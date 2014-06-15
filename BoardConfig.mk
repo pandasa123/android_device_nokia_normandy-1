@@ -56,7 +56,7 @@ TARGET_BOARD_PLATFORM_GPU := qcom-adreno203
 BOARD_USES_ADRENO_200 := true
 
 # Inline kernel building
-TARGET_KERNEL_SOURCE := kernel/nokia/normandy
+TARGET_KERNEL_SOURCE := kernel
 TARGET_KERNEL_CONFIG := cyanogenmod_normandy_defconfig
 
 KERNEL_EXTERNAL_MODULES:
