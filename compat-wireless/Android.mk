@@ -1,6 +1,6 @@
 LOCAL_PATH := $(call my-dir)
-ifeq ($(call is-android-codename,JELLY_BEAN),true)
-	DLKM_DIR := $(TOP)/device/qcom/common/dlkm
+ifeq ($(call is-android-codename,KITKAT),true)
+	DLKM_DIR := $(TOP)/build/dlkm
 else
 	DLKM_DIR := build/dlkm
 endif
