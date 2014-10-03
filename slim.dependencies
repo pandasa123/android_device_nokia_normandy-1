@@ -1,0 +1,13 @@
+
+[
+  {
+    "remote": "github"
+    "repository": "NormandyCM11/android_kernel_nokia_normandy",
+    "target_path": "kernel/nokia/normandy"
+  },
+  {
+    "remote": "github"
+    "repository": "NormandyCM11/android_vendor_nokia_normandy",
+    "target_path": "vendor/nokia/normandy"
+  }
+]
